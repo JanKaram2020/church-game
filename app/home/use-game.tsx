@@ -16,7 +16,7 @@ const STORAGE_KEYS = {
 const getNNumbers = (n: number) => Array.from({ length: n }, (_, i) => i + 1);
 const initialNumbers = getNNumbers(500);
 const initialChoices: Choice[] = [
-  { name: "احكام", count: 8 },
+  { name: "احكام", count: 18 },
   { name: "مبروك كسبت", count: 4 },
   { name: "حظ سعيد المرة القادمة", count: 4 },
   { name: "ما معني", count: 4 },
