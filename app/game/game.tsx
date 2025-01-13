@@ -1,6 +1,7 @@
 "use client";
 import useGame from "./use-game";
 import Settings from "./settings";
+import Image from "next/image";
 
 function Game() {
   const {
@@ -25,11 +26,12 @@ function Game() {
           "absolute top-0 left-0 w-screen h-screen backdrop-blur-[5px] z-10"
         }
       ></div>
-      <img
+      <Image
         src={"/logo.png"}
         width={"200"}
         height={"200"}
         className={"z-40 ml-[-30px]"}
+        alt={"Youth meeting's logo"}
       />
       <div
         className={

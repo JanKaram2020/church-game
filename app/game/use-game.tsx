@@ -1,47 +1,14 @@
 import { useState, useEffect, useRef } from "react";
+import useLocalStorage from "@/lib/use-local-storage";
+import { getNNumbers } from "@/lib/utils";
+import {
+  type Choice,
+  initialChoices,
+  initialNumbers,
+  STORAGE_KEYS,
+  timeoutConstant,
+} from "@/app/game/common";
 
-export interface Choice {
-  name: string;
-  count: number;
-}
-
-const STORAGE_KEYS = {
-  NUMBERS: "christmas-numbers",
-  CHOICES: "christmas-choices",
-  DISPLAYED_NUMBER: "christmas-displayedNumber",
-  DISPLAYED_CHOICE: "christmas-displayedChoice",
-  IS_NUMBERS_DISABLED: "christmas-isNumbersDisabled",
-  IS_CHOICES_DISABLED: "christmas-isChoicesDisabled",
-};
-const getNNumbers = (n: number) => Array.from({ length: n }, (_, i) => i + 1);
-const initialNumbers = getNNumbers(500);
-const initialChoices: Choice[] = [
-  { name: "احكام", count: 18 },
-  { name: "مبروك كسبت", count: 4 },
-  { name: "حظ سعيد المرة القادمة", count: 4 },
-  { name: "ما معني", count: 4 },
-  { name: "من هو/هي", count: 9 },
-  { name: "اكمل", count: 2 },
-  { name: "صح ام خطأ", count: 2 },
-  { name: "سؤال", count: 5 },
-];
-
-const timeoutConstant = 2000;
-const useLocalStorage = <T,>(key: string, initialValue: T) => {
-  const [state, setState] = useState<T>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem(key);
-      return stored ? (JSON.parse(stored) as T) : initialValue;
-    }
-    return initialValue;
-  });
-
-  useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(state));
-  }, [key, state]);
-
-  return [state, setState] as const;
-};
 const useGame = () => {
   const [isChoicesDisabled, setIsChoicesDisabled] = useLocalStorage(
     STORAGE_KEYS.IS_CHOICES_DISABLED,
@@ -160,6 +127,7 @@ const useGame = () => {
     setNumbers(getNNumbers(numbers));
     setChoices(choices);
   };
+
   useEffect(() => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);

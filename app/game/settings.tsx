@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import type { Choice } from "./use-game";
 import {
   Dialog,
   DialogContent,
@@ -11,22 +10,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import SettingsButtonDialog from "@/app/game/settings-button-dialog";
+import { getRandomId } from "@/lib/utils";
+import { SettingsType } from "@/app/game/common";
 
-const getRandomId = () => Math.random().toString(36).substring(2, 5);
-
-type SettingsType = {
-  choicesLeft: number;
-  initialCount: number;
-  initialChoices: Choice[];
-  resetGame: () => void;
-  changeValues: ({
-    numbers,
-    choices,
-  }: {
-    numbers: number;
-    choices: Choice[];
-  }) => void;
-};
 const SettingsForm = ({
   initialCount,
   initialChoices,
@@ -43,7 +30,7 @@ const SettingsForm = ({
 }) => {
   const [formState, setFormState] = useState({
     count: initialCount,
-    choices: initialChoices.map((c, i) => ({ ...c, id: getRandomId() + i })),
+    choices: initialChoices.map((c, i) => ({ ...c, id: getRandomId(i) })),
   });
   const [editing, setEditing] = useState(false);
   return (
@@ -170,7 +157,7 @@ const SettingsForm = ({
                       {
                         name: "",
                         count: 1,
-                        id: getRandomId() + (formState.choices.length + 1),
+                        id: getRandomId(formState.choices.length + 1),
                       },
                     ],
                   });
@@ -183,31 +170,42 @@ const SettingsForm = ({
           </form>
 
           <DialogFooter className={"gap-2"}>
-            <Button
-              variant={"destructive"}
-              type={"button"}
-              onClick={() => {
+            <SettingsButtonDialog
+              description={"هنرجع اللعبة زي ما جت"}
+              actionLabel={"اه رجع"}
+              cancelLabel={"لا مترجعش"}
+              action={() => {
                 resetGame();
                 closeModal();
               }}
             >
-              Factory Reset Game
-            </Button>
-            <Button
-              variant={"destructive"}
-              type={"button"}
-              onClick={() => {
+              <Button variant={"destructive"} type={"button"}>
+                Factory Reset Game
+              </Button>
+            </SettingsButtonDialog>
+            <SettingsButtonDialog
+              description={"اعادة لقبل التعديلات"}
+              actionLabel={"اه عيد"}
+              cancelLabel={"لا متعدش"}
+              action={() => {
                 setFormState({
                   count: initialCount,
                   choices: initialChoices.map((c, i) => ({
                     ...c,
-                    id: getRandomId() + i,
+                    id: getRandomId(i),
                   })),
                 });
               }}
             >
-              اعادة لقبل التعديلات
-            </Button>
+              <Button
+                variant={"destructive"}
+                type={"button"}
+                onClick={() => {}}
+              >
+                اعادة لقبل التعديلات
+              </Button>
+            </SettingsButtonDialog>
+
             <Button
               variant={"outline"}
               type={"button"}
@@ -218,23 +216,30 @@ const SettingsForm = ({
             >
               الغاء
             </Button>
-            <Button
-              variant={"secondary"}
-              type={"button"}
-              className={"bg-green-400"}
-              onClick={() => {
-                changeValues({
-                  numbers: formState.count,
-                  choices: formState.choices.map((c) => ({
-                    name: c.name,
-                    count: c.count,
-                  })),
-                });
-                closeModal();
+
+            <SettingsButtonDialog
+              description={"حفظ التعديلات الجديدة ؟"}
+              actionLabel={"اه احفظ"}
+              cancelLabel={"لا متحفظش"}
+              actionProps={{
+                variant: "success",
+                className: "bg-green-400",
+                onClick: () => {
+                  changeValues({
+                    numbers: formState.count,
+                    choices: formState.choices.map((c) => ({
+                      name: c.name,
+                      count: c.count,
+                    })),
+                  });
+                  closeModal();
+                },
               }}
             >
-              حفظ
-            </Button>
+              <Button variant={"success"} type={"button"}>
+                حفظ
+              </Button>
+            </SettingsButtonDialog>
             <Button
               variant={"outline"}
               type={"button"}
